@@ -1,11 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedulr - Professional Task Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  
+<body data-theme="dark">
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calendar-check logo-icon"></i> Schedulr
+                </div>
+                <div class="header-actions">
+                    <!-- Profile Section -->
+                    <div class="profile-section" onclick="openProfileModal()">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Profile" class="profile-pic" id="profilePic">
+                        <div class="profile-name" id="profileName">John Doe</div>
+                    </div>
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <div class="container">
+        <nav class="nav">
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="nav-btn" onclick="showSection('tasks')">
+                    <i class="fas fa-tasks"></i> Tasks
+                </button>
+                <button class="nav-btn" onclick="showSection('statistics')">
+                    <i class="fas fa-chart-line"></i> Statistics
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-progress">
+                            <div class="stat-progress-bar" style="width: 100%"></div>
+                        </div>
+                        <i class="fas fa-tasks stat-icon"></i>
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-progress">
+                            <div class="stat-progress-bar" style="width: 100%"></div>
+                        </div>
+                        <i class="fas fa-check-circle stat-icon"></i>
+                        <div class="stat-number" id="completedTasks">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-progress">
+                            <div class="stat-progress-bar" style="width: 100%"></div>
+                        </div>
+                        <i class="fas fa-clock stat-icon"></i>
+                        <div class="stat-number" id="pendingTasks">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="tasks" class="section">
+                <!-- Task Form -->
+                <div class="task-form">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-plus-circle"></i> Add New Task
+                    </h2>
+                    <form id="taskForm">
+                        <div class="form-group">
+                            <label class="form-label">Task Title</label>
+                            <input type="text" class="form-input" id="taskTitle" placeholder="Enter task title..." required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" id="taskDescription" placeholder="Enter task description..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-input" id="taskDate" required>
+                        </div>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tasks List -->
+                <div class="tasks-container">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-list"></i> Your Tasks
+                    </h2>
+                    <div id="tasksList">
+                        <!-- Tasks will be dynamically inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section id="statistics" class="section">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-pie"></i> Completion Rate</h3>
+                        <div class="analytics-value" id="completionRate">0%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="completionBar" style="width: 0%"></div>
+                        </div>
+                        <p class="analytics-description">Percentage of tasks completed this month</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-bolt"></i> Productivity Score</h3>
+                        <div class="analytics-value" id="productivityScore">0</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="productivityBar" style="width: 0%"></div>
+                        </div>
+                        <p class="analytics-description">Based on completed tasks and deadlines met</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-fire"></i> Current Streak</h3>
+                        <div class="analytics-value" id="currentStreak">0 days</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="streakBar" style="width: 0%"></div>
+                        </div>
+                        <p class="analytics-description">Consecutive days with completed tasks</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--text-primary); text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fas fa-chart-line"></i> Task Analytics
+                    </h2>
+                    
+                    <!-- Chart Type Controls -->
+                    <div class="chart-controls">
+                        <button class="chart-btn active" onclick="changeChartType('pie')">
+                            <i class="fas fa-chart-pie"></i> Pie
+                        </button>
+                        <button class="chart-btn" onclick="changeChartType('bar')">
+                            <i class="fas fa-chart-bar"></i> Bar
+                        </button>
+                        <button class="chart-btn" onclick="changeChartType('line')">
+                            <i class="fas fa-chart-line"></i> Line
+                        </button>
+                    </div>
+
+                    <!-- Chart Canvas -->
+                    <canvas id="statsChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="showSection('tasks'); document.getElementById('taskTitle').focus();" data-tooltip="Add New Task">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Success Badge -->
+    <div class="success-badge" id="successBadge">
+        <i class="fas fa-check"></i>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </h2>
+                <button class="close-btn" onclick="closeProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="profileNameInput" placeholder="Enter your name...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Profile Picture URL</label>
+                    <input type="url" class="form-input" id="profilePicInput" placeholder="Enter image URL...">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">
+                    <i class="fas fa-save"></i> Save Profile
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
